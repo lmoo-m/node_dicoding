@@ -3,20 +3,20 @@ const { nanoid } = require("nanoid");
 
 const handler = {
     getBooks(req, h) {
-        const datas = [];
+        const books = [];
         book.forEach((e) => {
             const data = {
                 id: e.id,
                 name: e.name,
                 publisher: e.publisher,
             };
-            datas.push(data);
+            books.push(data);
         });
 
         const res = h
             .response({
                 status: "success",
-                data: datas,
+                data: { books: books },
             })
             .code(200);
         return res;
@@ -57,8 +57,9 @@ const handler = {
         } = req.payload;
         const id = nanoid(16);
         const date = new Date().toISOString();
+        const finish = pageCount === readPage ? true : false;
 
-        if (name === "") {
+        if (!name) {
             const res = h
                 .response({
                     status: "fail",
@@ -86,7 +87,7 @@ const handler = {
             publisher: publisher,
             pageCount: pageCount,
             readPage: readPage,
-            finished: false,
+            finished: finish,
             reading: reading,
             insertedAt: date,
             updatedAt: date,
@@ -97,7 +98,7 @@ const handler = {
                 status: "success",
                 message: "Buku berhasil ditambahkan",
                 data: {
-                    id: id,
+                    bookId: id,
                 },
             })
             .code(201);
@@ -119,7 +120,7 @@ const handler = {
         const date = new Date().toISOString();
         const data = book.filter((e) => e.id === id);
 
-        if (name === "") {
+        if (!name) {
             const res = h
                 .response({
                     status: "fail",
