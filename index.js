@@ -1,16 +1,20 @@
-import express from "express";
-import db from "./config/database.js";
-import router from "./routes/route.js";
+const hapi = require("@hapi/hapi");
+const id = require("nanoid");
+const routes = require("./src/route");
 
-const app = express();
+const init = async () => {
+    const server = hapi.server({
+        host: "localhost",
+        port: 9000,
+    });
+    await server.start();
+    server.route(routes);
+    console.log("server runn on", server.info.uri);
+};
 
-try {
-    db.authenticate();
-} catch (error) {
-    console.error(error);
-}
+process.on("unhandledRejection", (err) => {
+    console.log(err);
+    process.exit(1);
+});
 
-app.use(express.json());
-app.use("/", router);
-
-app.listen(9000, () => console.log("server runn in port 9000"));
+init();
